@@ -29,6 +29,15 @@ function App() {
           startHour: 0, // Start hour for the scheduler
           endHour: 24, // End hour for the scheduler
         }}
+        week={{
+          weekDays: [0, 1, 2, 3, 4, 5, 6],
+          weekStartOn: 1,
+          startHour: 0,
+          endHour: 24,
+          step: 60,
+          navigation: true,
+          disableGoToDay: false,
+        }}
         navigation={true}
       />
     </>
