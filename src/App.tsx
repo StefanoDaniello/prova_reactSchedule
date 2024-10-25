@@ -1,40 +1,36 @@
 import { Scheduler } from "@aldabil/react-scheduler";
 import { it } from "date-fns/locale";
 import { Button } from "@mui/material";
+import moment from "moment";
 
 function App() {
-  const events: any[] = [
+  const today = moment();
+
+  const events = [
     {
       event_id: 1,
       title: "Event 1",
-      start: new Date("2024/10/25 09:30"),
-      end: new Date("2024/10/25 10:30"),
+      start: moment("2024/10/25 09:30").toDate(),
+      end: moment("2024/10/25 10:30").toDate(),
     },
     {
       event_id: 2,
       title: "Event 2",
-      start: new Date("2024/10/25 10:00"),
-      end: new Date("2024/10/25 11:00"),
+      start: moment("2024/10/25 10:00").toDate(),
+      end: moment("2024/10/25 11:00").toDate(),
     },
   ];
 
-  function getFirstDayOfWeek(date: Date) {
-    const firstDay = new Date(date);
-    const dayOfWeek = firstDay.getDay(); // 0 = domenica, 1 = lunedì, ..., 6 = sabato
-    firstDay.setHours(0, 0, 0, 0);
-    const diff = (dayOfWeek + 6) % 7; // Calcola la differenza per arrivare al lunedì
-    firstDay.setDate(firstDay.getDate() - diff); // Sottrae la differenza dal giorno corrente
-    return firstDay;
-  }
+  // Inizio e fine della settimana corrente
+  const startOfWeek = today.clone().startOf("isoWeek");
+  const endOfWeek = today.clone().endOf("isoWeek");
 
-  function getLastDayOfWeek(date: Date) {
-    const lastDay = new Date(date);
-    const dayOfWeek = lastDay.getDay(); // 0 = domenica, 1 = lunedì, ..., 6 = sabato
-    lastDay.setHours(23, 59, 59, 999);
-    const diff = (dayOfWeek + 0) % 7; // Calcola la differenza per arrivare alla domenica
-    lastDay.setDate(lastDay.getDate() + (7 - diff)); // Aggiunge la differenza fino alla domenica
-    return lastDay;
-  }
+  // Controlla se oggi è un weekend
+  const isWeekend = today.isoWeekday() === 6 || today.isoWeekday() === 7;
+
+  // Calcola l'inizio e la fine della settimana successiva
+  const nextWeekStart = isWeekend ? startOfWeek.clone().add(1, "weeks") : null;
+  const nextWeekEnd = isWeekend ? endOfWeek.clone().add(1, "weeks") : null;
 
   return (
     <>
@@ -51,37 +47,39 @@ function App() {
           endHour: 24,
           step: 60,
           cellRenderer: ({ height, start, onClick, ...props }) => {
-            const today = new Date();
-            today.setDate(today.getDate() + 2);
+            const startMoment = moment(start);
+            const isBeforeToday = startMoment.isBefore(today);
+            const isCurrentWeek = startMoment.isBetween(
+              startOfWeek,
+              endOfWeek,
+              null,
+              "[]"
+            );
 
-            // Inizio e fine della settimana corrente
-            const firstDayOfWeek = getFirstDayOfWeek(today);
-            const lastDayOfWeek = getLastDayOfWeek(today);
+            // Verifica se il giorno appartiene alla settimana successiva
+            const isNextWeekEnabled =
+              nextWeekStart &&
+              startMoment.isBetween(nextWeekStart, nextWeekEnd, null, "[]");
 
-            const disabled =
-              start < today || start >= lastDayOfWeek || start < firstDayOfWeek;
-
-            const restProps = disabled ? {} : props;
+            // Determina se il giorno è disabilitato
+            const isDisabled =
+              isBeforeToday || (!isCurrentWeek && !isNextWeekEnabled);
 
             return (
-              console.log(today, firstDayOfWeek, lastDayOfWeek),
-              (
-                <Button
-                  style={{
-                    height: "100%",
-                    background: disabled ? "#eee" : "transparent",
-                    cursor: disabled ? "not-allowed" : "pointer",
-                  }}
-                  onClick={() => {
-                    if (disabled) {
-                      return alert("Opss, giorno disabilitato");
-                    }
-                    onClick();
-                  }}
-                  disableRipple={disabled}
-                  {...restProps}
-                ></Button>
-              )
+              <Button
+                style={{
+                  height: "100%",
+                  background: isDisabled ? "#eee" : "transparent",
+                  cursor: isDisabled ? "not-allowed" : "pointer",
+                }}
+                onClick={() => {
+                  if (isDisabled) {
+                    return alert("Opss, giorno disabilitato");
+                  }
+                  onClick();
+                }}
+                {...props} // Mantieni tutte le props aggiuntive
+              />
             );
           },
         }}
