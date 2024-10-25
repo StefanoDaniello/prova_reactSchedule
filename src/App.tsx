@@ -18,6 +18,24 @@ function App() {
     },
   ];
 
+  function getFirstDayOfWeek(date: Date) {
+    const firstDay = new Date(date);
+    const dayOfWeek = firstDay.getDay(); // 0 = domenica, 1 = lunedì, ..., 6 = sabato
+    firstDay.setHours(0, 0, 0, 0);
+    const diff = (dayOfWeek + 6) % 7; // Calcola la differenza per arrivare al lunedì
+    firstDay.setDate(firstDay.getDate() - diff); // Sottrae la differenza dal giorno corrente
+    return firstDay;
+  }
+
+  function getLastDayOfWeek(date: Date) {
+    const lastDay = new Date(date);
+    const dayOfWeek = lastDay.getDay(); // 0 = domenica, 1 = lunedì, ..., 6 = sabato
+    lastDay.setHours(23, 59, 59, 999);
+    const diff = (dayOfWeek + 0) % 7; // Calcola la differenza per arrivare alla domenica
+    lastDay.setDate(lastDay.getDate() + (7 - diff)); // Aggiunge la differenza fino alla domenica
+    return lastDay;
+  }
+
   return (
     <>
       <Scheduler
@@ -25,12 +43,7 @@ function App() {
         events={events}
         locale={it}
         hourFormat="24"
-        month={{
-          weekDays: [0, 1, 2, 3, 4, 5, 6], // Mostra tutti i giorni della settimana, ma abilitati solo quelli della settimana corrente
-          weekStartOn: 1, // Inizio della settimana di lunedì
-          startHour: 0, // Ora di inizio per il planner
-          endHour: 24, // Ora di fine per il planner
-        }}
+        navigation={true}
         week={{
           weekDays: [0, 1, 2, 3, 4, 5, 6],
           weekStartOn: 1,
@@ -38,25 +51,20 @@ function App() {
           endHour: 24,
           step: 60,
           cellRenderer: ({ height, start, onClick, ...props }) => {
-            // Ottieni la data e l'ora correnti
-            const now = new Date();
+            const today = new Date();
+            today.setDate(today.getDate() + 2);
 
-            // Crea una nuova data senza ore, minuti, secondi e millisecondi
-            const currentTime = new Date(
-              now.getFullYear(),
-              now.getMonth(),
-              now.getDate(),
-              now.getHours() - 1,
-              now.getMinutes()
-            );
+            // Inizio e fine della settimana corrente
+            const firstDayOfWeek = getFirstDayOfWeek(today);
+            const lastDayOfWeek = getLastDayOfWeek(today);
 
-            // Controlla se l'orario dell'evento è passato
-            const disabled = start.getTime() < currentTime.getTime(); // start è in millisecondi
+            const disabled =
+              start < today || start >= lastDayOfWeek || start < firstDayOfWeek;
 
             const restProps = disabled ? {} : props;
 
             return (
-              console.log({ start, currentTime }),
+              console.log(today, firstDayOfWeek, lastDayOfWeek),
               (
                 <Button
                   style={{
@@ -66,7 +74,7 @@ function App() {
                   }}
                   onClick={() => {
                     if (disabled) {
-                      return alert("Opss");
+                      return alert("Opss, giorno disabilitato");
                     }
                     onClick();
                   }}
@@ -77,7 +85,6 @@ function App() {
             );
           },
         }}
-        navigation={true}
       />
     </>
   );
