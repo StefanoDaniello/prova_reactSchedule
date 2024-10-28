@@ -1,0 +1,17 @@
+.MuiButton-textPrimary {
+  color: #cae15a !important;
+}
+.css-e0r9tj-MuiTypography-root {
+  color: #cae15a !important;
+}
+.css-nl6has .MuiButton-root.cancel {
+  color: red !important;
+}
+.css-nl6has .MuiButton-root.cancel:hover,
+.css-nl6has .MuiButton-root.delete:hover {
+  /* background-color: rgba(144, 144, 144, 0.408) !important; */
+  background-color: rgb(195, 217, 86) !important;
+}
+.css-nl6has .MuiButton-root.delete {
+  color: #d32f2f !important;
+}

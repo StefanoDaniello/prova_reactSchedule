@@ -10,14 +10,23 @@ function App() {
     {
       event_id: 1,
       title: "Event 1",
-      start: moment("2024/10/25 09:30").toDate(),
-      end: moment("2024/10/25 10:30").toDate(),
+      editable: false,
+      draggable: false,
+      // disabled: true,
+      color: "#cae15a",
+      textColor: "black",
+      start: moment("2024/10/28 09:00").toDate(),
+      end: moment("2024/10/28 10:00").toDate(),
     },
     {
       event_id: 2,
       title: "Event 2",
-      start: moment("2024/10/25 10:00").toDate(),
-      end: moment("2024/10/25 11:00").toDate(),
+      editable: false,
+      draggable: false,
+      color: "#cae15a",
+      textColor: "black",
+      start: moment("2024/10/28 10:00").toDate(),
+      end: moment("2024/10/28 11:00").toDate(),
     },
   ];
 
@@ -39,8 +48,50 @@ function App() {
         events={events}
         locale={it}
         hourFormat="24"
-        navigation={true}
+        disableViewNavigator={true}
+        // day={{
+        //   startHour: 0,
+        //   endHour: 24,
+        //   step: 60,
+        //   cellRenderer: ({ height, start, onClick, ...props }) => {
+        //     const startMoment = moment(start);
+        //     const isBeforeToday = startMoment.isBefore(today);
+        //     const isCurrentWeek = startMoment.isBetween(
+        //       startOfWeek,
+        //       endOfWeek,
+        //       null,
+        //       "[]"
+        //     );
+
+        //     // Verifica se il giorno appartiene alla settimana successiva
+        //     const isNextWeekEnabled =
+        //       nextWeekStart &&
+        //       startMoment.isBetween(nextWeekStart, nextWeekEnd, null, "[]");
+
+        //     // Determina se il giorno è disabilitato
+        //     const isDisabled =
+        //       isBeforeToday || (!isCurrentWeek && !isNextWeekEnabled);
+
+        //     return (
+        //       <Button
+        //         style={{
+        //           height: "100%",
+        //           background: isDisabled ? "#eee" : "transparent",
+        //           cursor: isDisabled ? "not-allowed" : "pointer",
+        //         }}
+        //         onClick={() => {
+        //           if (isDisabled) {
+        //             return alert("Opss, giorno disabilitato");
+        //           }
+        //           onClick();
+        //         }}
+        //         {...props} // Mantieni tutte le props aggiuntive
+        //       />
+        //     );
+        //   },
+        // }}
         week={{
+          disableGoToDay: true,
           weekDays: [0, 1, 2, 3, 4, 5, 6],
           weekStartOn: 1,
           startHour: 0,
