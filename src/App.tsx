@@ -2,14 +2,8 @@ import { Scheduler } from "@aldabil/react-scheduler";
 import { it } from "date-fns/locale";
 import { Button } from "@mui/material";
 import moment from "moment";
-
+import AddEventDialog from "./AddEventDialog";
 function App() {
-  document
-    .querySelectorAll(".css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input")
-    .forEach((input) => {
-      (input as HTMLInputElement).disabled = true;
-    });
-
   const today = moment();
   // console.log(today);
   const events = [
@@ -56,6 +50,22 @@ function App() {
         locale={it}
         hourFormat="24"
         disableViewNavigator={true}
+        customEditor={({ ...props }) => (
+          console.log(props),
+          (
+            <AddEventDialog
+              {...props}
+              state={props.state}
+              start={props.state.start.value}
+              end={props.state.end.value}
+              onConfirm={props.onConfirm}
+              onClose={props.close}
+            />
+          )
+          // <div>
+          //   <h1>ciao</h1>
+          // </div>
+        )}
         // day={{
         //   startHour: 0,
         //   endHour: 24,
@@ -104,6 +114,7 @@ function App() {
           startHour: 0,
           endHour: 24,
           step: 60,
+
           cellRenderer: ({ height, start, onClick, ...props }) => {
             const startMoment = moment(start);
             const isBeforeToday = startMoment.isBefore(today);
@@ -136,6 +147,15 @@ function App() {
                     return alert("Opss, giorno disabilitato");
                   }
                   onClick();
+                  document
+                    .querySelectorAll(
+                      ".css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input"
+                    )
+                    .forEach((input) => {
+                      const inputElement = input as HTMLInputElement;
+                      // inputElement.classList.add("Mui-disabled");
+                      inputElement.readOnly = true; // Imposta readonly
+                    });
                 }}
                 {...props} // Mantieni tutte le props aggiuntive
               />

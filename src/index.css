@@ -21,3 +21,99 @@
 /* .css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input {
   display: none !important;
 } */
+
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2),
+    0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+  padding: 20px;
+  width: 400px; /* Modifica la larghezza secondo necessità */
+}
+
+.dialog-title {
+  margin: 0;
+  font-size: 1.5em;
+}
+
+.dialog-content {
+  margin: 20px 0;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.date-time {
+  display: flex;
+  justify-content: space-between;
+}
+
+.date-time div {
+  flex: 1;
+  margin-right: 10px; /* Spazio tra i campi */
+}
+
+.date-time div:last-child {
+  margin-right: 0; /* Rimuove il margine per l'ultimo elemento */
+}
+
+.calendar-icon {
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cancel-button,
+.add-button {
+  margin-left: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #f0f0f0;
+}
+
+.add-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
