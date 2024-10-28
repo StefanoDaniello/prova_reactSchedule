@@ -1,22 +1,101 @@
 import { Scheduler } from "@aldabil/react-scheduler";
 import { it } from "date-fns/locale";
 import { Button } from "@mui/material";
-
+import moment from "moment";
+import AddEventDialog from "./AddEventDialog";
+import { useState } from "react";
+import { useEffect } from "react";
 function App() {
-  const events: any[] = [
+  const today = moment();
+
+  const [events, setEvents] = useState([
     {
       event_id: 1,
       title: "Event 1",
-      start: new Date("2024/10/25 09:30"),
-      end: new Date("2024/10/25 10:30"),
+      editable: false,
+      draggable: false,
+      disabled: false,
+      color: "#cae15a",
+      textColor: "black",
+      start: moment("2024/10/28 15:00").toDate(),
+      end: moment("2024/10/28 16:00").toDate(),
     },
     {
       event_id: 2,
       title: "Event 2",
-      start: new Date("2024/10/25 10:00"),
-      end: new Date("2024/10/25 11:00"),
+      editable: false,
+      draggable: false,
+      disabled: false,
+      color: "#cae15a",
+      textColor: "black",
+      start: moment("2024/10/28 10:00").toDate(),
+      end: moment("2024/10/28 11:00").toDate(),
     },
-  ];
+    {
+      event_id: 3,
+      title: "Event 3",
+      editable: false,
+      draggable: false,
+      disabled: false,
+      color: "#cae15a",
+      textColor: "black",
+      start: moment("2024/10/29 10:00").toDate(),
+      end: moment("2024/10/29 11:00").toDate(),
+    },
+    {
+      event_id: 4,
+      title: "Event 3",
+      editable: false,
+      draggable: false,
+      disabled: false,
+      color: "#cae15a",
+      textColor: "black",
+      start: moment("2024/10/28 17:00").toDate(),
+      end: moment("2024/10/28 18:00").toDate(),
+    },
+    {
+      event_id: 5,
+      title: "Event 3",
+      editable: false,
+      draggable: false,
+      disabled: false,
+      color: "#cae15a",
+      textColor: "black",
+      start: moment("2024/10/28 19:00").toDate(),
+      end: moment("2024/10/28 20:00").toDate(),
+    },
+  ]);
+
+  // Funzione per aggiornare `disabled` negli eventi
+  const updateEventStatus = () => {
+    const now = moment();
+    const updatedEvents = events.map((event) => ({
+      ...event,
+      disabled: moment(event.start).isSameOrBefore(now),
+      editable: false,
+      draggable: false,
+    }));
+    // faccio la chiamata post
+    setEvents(updatedEvents);
+  };
+
+  // Aggiorna lo stato degli eventi all'inizio e ogni minuto
+  useEffect(() => {
+    updateEventStatus();
+    // const interval = setInterval(updateEventStatus, 3000);
+    // return () => clearInterval(interval);
+  }, []);
+
+  // Inizio e fine della settimana corrente
+  const startOfWeek = today.clone().startOf("isoWeek");
+  const endOfWeek = today.clone().endOf("isoWeek");
+
+  // Controlla se oggi è un weekend
+  const isWeekend = today.isoWeekday() === 6 || today.isoWeekday() === 7;
+
+  // Calcola l'inizio e la fine della settimana successiva
+  const nextWeekStart = isWeekend ? startOfWeek.clone().add(1, "weeks") : null;
+  const nextWeekEnd = isWeekend ? endOfWeek.clone().add(1, "weeks") : null;
 
   return (
     <>
@@ -25,88 +104,73 @@ function App() {
         events={events}
         locale={it}
         hourFormat="24"
-        month={{
-          weekDays: [0, 1, 2, 3, 4, 5, 6],
-          weekStartOn: 1,
-          startHour: 0,
-          endHour: 24,
-        }}
+        disableViewNavigator={true}
+        customEditor={({ ...props }) => (
+          console.log(props),
+          (
+            <AddEventDialog
+              {...props}
+              state={props.state}
+              start={props.state.start.value}
+              end={props.state.end.value}
+              onConfirm={props.onConfirm}
+              onClose={props.close}
+              events={events}
+              setEvents={setEvents}
+            />
+          )
+        )}
         week={{
+          disableGoToDay: true,
           weekDays: [0, 1, 2, 3, 4, 5, 6],
           weekStartOn: 1,
           startHour: 0,
           endHour: 24,
           step: 60,
+
           cellRenderer: ({ height, start, onClick, ...props }) => {
-            const now = new Date();
-            const today = new Date(
-              now.getFullYear(),
-              now.getMonth(),
-              now.getDate() + 1
+            const startMoment = moment(start);
+            const isBeforeToday = startMoment.isBefore(today);
+            // setStartState(startMoment);
+            const isCurrentWeek = startMoment.isBetween(
+              startOfWeek,
+              endOfWeek,
+              null,
+              "[]"
             );
 
-            // Inizio e fine della settimana corrente
-            const startOfWeek = new Date(today);
-            startOfWeek.setDate(today.getDate() - today.getDay() + 1); // Lunedì
-            const endOfWeek = new Date(today);
-            endOfWeek.setDate(today.getDate() + (8 - today.getDay())); // Domenica
+            // Verifica se il giorno appartiene alla settimana successiva
+            const isNextWeekEnabled =
+              nextWeekStart &&
+              startMoment.isBetween(nextWeekStart, nextWeekEnd, null, "[]");
 
-            // Inizio e fine della settimana successiva
-            const startOfNextWeek = new Date(endOfWeek);
-            startOfNextWeek.setDate(endOfWeek.getDate()); // Lunedì della settimana successiva
-            const endOfNextWeek = new Date(startOfNextWeek);
-            endOfNextWeek.setDate(startOfNextWeek.getDate() + 7); // Domenica della settimana successiva
-
-            // Inizio e fine della settimana dopo la successiva
-            const startOfTwoWeeks = new Date(endOfNextWeek);
-            startOfTwoWeeks.setDate(endOfNextWeek.getDate() + 1); // Lunedì della settimana dopo
-            const endOfTwoWeeks = new Date(startOfTwoWeeks);
-            endOfTwoWeeks.setDate(startOfTwoWeeks.getDate() + 6); // Domenica della settimana dopo
-
-            // Sbloccare i giorni della settimana successiva solo se oggi è sabato o domenica
-            const isSaturday = today.getDay() === 6; // Sabato
-            const isInCurrentWeek = start >= startOfWeek && start < endOfWeek;
-            const isPast = start < now;
-
-            const isNextWeek =
-              start >= startOfNextWeek && start <= endOfNextWeek && isSaturday;
-
-            // Disabilita il lunedì della settimana dopo
-            const isMondayOfTwoWeeks =
-              start.getDay() === 0 &&
-              start >= startOfTwoWeeks &&
-              start < endOfTwoWeeks;
-
-            // Disabilita i giorni non della settimana corrente, già passati o della settimana successiva
-            const disabled =
-              (!isInCurrentWeek && !isNextWeek) || isPast || isMondayOfTwoWeeks; // Lunedì della settimana dopo
-
-            const restProps = disabled ? {} : props;
+            // Determina se il giorno è disabilitato
+            const isDisabled =
+              isBeforeToday || (!isCurrentWeek && !isNextWeekEnabled);
 
             return (
+              // console.log(start),
               <Button
                 style={{
                   height: "100%",
-                  background: isPast
-                    ? "#ffcccc"
-                    : disabled
-                    ? "#eee"
-                    : "transparent", // Rosso pallido per giorni passati
-                  cursor: disabled ? "not-allowed" : "pointer",
+                  width: "100%",
+                  padding: "0px",
+                  margin: "0px",
+                  background: isDisabled ? "#eee" : "transparent",
+                  cursor: isDisabled ? "not-allowed" : "pointer",
                 }}
                 onClick={() => {
-                  if (disabled) {
-                    return alert("Opss");
+                  if (isDisabled) {
+                    //Toast
+                    return alert("Opss, giorno disabilitato");
                   }
                   onClick();
                 }}
-                disableRipple={disabled}
-                {...restProps}
-              ></Button>
+                {...props} // Mantieni tutte le props aggiuntive
+              />
             );
           },
         }}
-        navigation={true}
       />
     </>
   );
