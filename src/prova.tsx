@@ -7,31 +7,7 @@ import { useState, useEffect } from "react";
 
 function App() {
   const today = moment();
-  // today.set({ hour: 18, minute: 59, second: 59, millisecond: 59 });
-  const [currentHour, setCurrentHour] = useState(moment().hour());
-
-  useEffect(() => {
-    const logCurrentHour = () => {
-      const now = moment();
-      // now.set({ hour: 18, minute: 59, second: 59, millisecond: 59 });
-      console.log(`Current hour: ${now.hour()}`);
-      setCurrentHour(now.hour()); // Aggiorna l'ora corrente
-
-      // Calcola il tempo rimanente fino alla prossima ora
-      const endOfHour = moment().endOf("hour");
-      const timeUntilNextHour = endOfHour.diff(now);
-      console.log(now, endOfHour, timeUntilNextHour);
-
-      // Imposta il timeout per il prossimo cambio d'ora
-      const timeout = setTimeout(logCurrentHour, timeUntilNextHour);
-      return timeout; // Restituisci il timeout per la pulizia
-    };
-
-    // Log iniziale al montaggio
-    const initialTimeout = logCurrentHour();
-
-    return () => clearTimeout(initialTimeout); // Cleanup del timer iniziale
-  }, [currentHour]); // Aggiunge currentHour come dipendenza
+  // today.set({ hour: 18, minute: 0, second: 0, millisecond: 0 });
 
   const [events, setEvents] = useState([
     {
@@ -145,7 +121,7 @@ function App() {
       })
     );
     console.log(today);
-  }, [currentHour]);
+  }, [today.hour()]);
 
   return (
     <>
@@ -176,30 +152,22 @@ function App() {
           step: 60,
 
           cellRenderer: ({ height, start, onClick, ...props }) => {
-            const isDisabled = () => {
-              const startMoment = moment(start);
-              const isBeforeToday = startMoment.isBefore(today);
-              const isCurrentWeek = startMoment.isBetween(
-                startOfWeek,
-                endOfWeek,
-                null,
-                "[]"
-              );
+            const startMoment = moment(start);
+            const isBeforeToday = startMoment.isBefore(today);
+            const isCurrentWeek = startMoment.isBetween(
+              startOfWeek,
+              endOfWeek,
+              null,
+              "[]"
+            );
 
-              const isNextWeekEnabled =
-                nextWeekStart &&
-                startMoment.isBetween(nextWeekStart, nextWeekEnd, null, "[]");
+            const isNextWeekEnabled =
+              nextWeekStart &&
+              startMoment.isBetween(nextWeekStart, nextWeekEnd, null, "[]");
 
-              const Disabled =
-                isBeforeToday ||
-                startMoment.isSame(today, "hour") ||
-                (!isCurrentWeek && !isNextWeekEnabled);
-              return Disabled;
-            };
+            const isDisabled =
+              isBeforeToday || (!isCurrentWeek && !isNextWeekEnabled);
 
-            useEffect(() => {
-              isDisabled();
-            }, [currentHour]);
             return (
               <Button
                 style={{
@@ -207,11 +175,11 @@ function App() {
                   width: "100%",
                   padding: "0px",
                   margin: "0px",
-                  background: isDisabled() ? "#eee" : "transparent",
-                  cursor: isDisabled() ? "not-allowed" : "pointer",
+                  background: isDisabled ? "#eee" : "transparent",
+                  cursor: isDisabled ? "not-allowed" : "pointer",
                 }}
                 onClick={() => {
-                  if (isDisabled()) {
+                  if (isDisabled) {
                     return alert("Opss, giorno disabilitato");
                   }
                   onClick();
