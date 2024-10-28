@@ -3,18 +3,15 @@ import { it } from "date-fns/locale";
 import { Button } from "@mui/material";
 import moment from "moment";
 import AddEventDialog from "./AddEventDialog";
-// import { useState } from "react";
 function App() {
   const today = moment();
-  // console.log(today);
-  // const [startState, setStartState] = useState<moment.Moment | null>(null);
+
   const events = [
     {
       event_id: 1,
       title: "Event 1",
       editable: false,
       draggable: false,
-      //isBeforeToday mettere questa variabile a true
       disabled: false,
       color: "#cae15a",
       textColor: "black",
@@ -33,13 +30,6 @@ function App() {
       end: moment("2024/10/28 11:00").toDate(),
     },
   ];
-  // console.log(prova);
-  // events.forEach((event) => {
-  //   event.start = moment(event.start).toDate();
-  //   if (startState?.isBefore(event.start)) {
-  //     event.disabled = true;
-  //   }
-  // });
 
   // Inizio e fine della settimana corrente
   const startOfWeek = today.clone().startOf("isoWeek");
