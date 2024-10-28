@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { useEffect } from "react";
-const AddEventDialog = ({ state, start, end, onClose, onConfirm }: any) => {
+import moment from "moment";
+
+const AddEventDialog = ({
+  state,
+  start,
+  end,
+  onClose,
+  onConfirm,
+  events,
+  setEvents,
+}: any) => {
   if (!open) return null;
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
@@ -29,6 +39,20 @@ const AddEventDialog = ({ state, start, end, onClose, onConfirm }: any) => {
       state.title.validity = true;
       setError("");
       onConfirm({ title, subtitle, start, end });
+      setEvents([
+        ...events,
+        {
+          event_id: Math.floor(Math.random() * 1000),
+          title: title,
+          editable: false,
+          draggable: false,
+          disabled: false,
+          color: "#cae15a",
+          textColor: "black",
+          start: moment(start).toDate(),
+          end: moment(end).toDate(),
+        },
+      ]);
       onClose();
     }
   };

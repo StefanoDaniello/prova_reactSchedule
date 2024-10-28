@@ -3,10 +3,12 @@ import { it } from "date-fns/locale";
 import { Button } from "@mui/material";
 import moment from "moment";
 import AddEventDialog from "./AddEventDialog";
+import { useState } from "react";
+import { useEffect } from "react";
 function App() {
   const today = moment();
 
-  const events = [
+  const [events, setEvents] = useState([
     {
       event_id: 1,
       title: "Event 1",
@@ -15,8 +17,8 @@ function App() {
       disabled: false,
       color: "#cae15a",
       textColor: "black",
-      start: moment("2024/10/28 09:00").toDate(),
-      end: moment("2024/10/28 10:00").toDate(),
+      start: moment("2024/10/28 15:00").toDate(),
+      end: moment("2024/10/28 16:00").toDate(),
     },
     {
       event_id: 2,
@@ -29,7 +31,60 @@ function App() {
       start: moment("2024/10/28 10:00").toDate(),
       end: moment("2024/10/28 11:00").toDate(),
     },
-  ];
+    {
+      event_id: 3,
+      title: "Event 3",
+      editable: false,
+      draggable: false,
+      disabled: false,
+      color: "#cae15a",
+      textColor: "black",
+      start: moment("2024/10/29 10:00").toDate(),
+      end: moment("2024/10/29 11:00").toDate(),
+    },
+    {
+      event_id: 4,
+      title: "Event 3",
+      editable: false,
+      draggable: false,
+      disabled: false,
+      color: "#cae15a",
+      textColor: "black",
+      start: moment("2024/10/28 17:00").toDate(),
+      end: moment("2024/10/28 18:00").toDate(),
+    },
+    {
+      event_id: 5,
+      title: "Event 3",
+      editable: false,
+      draggable: false,
+      disabled: false,
+      color: "#cae15a",
+      textColor: "black",
+      start: moment("2024/10/28 19:00").toDate(),
+      end: moment("2024/10/28 20:00").toDate(),
+    },
+  ]);
+
+  // Funzione per aggiornare `disabled` negli eventi
+  const updateEventStatus = () => {
+    const now = moment();
+    const updatedEvents = events.map((event) => ({
+      ...event,
+      disabled: moment(event.start).isSameOrBefore(now),
+      editable: false,
+      draggable: false,
+    }));
+    // faccio la chiamata post
+    setEvents(updatedEvents);
+  };
+
+  // Aggiorna lo stato degli eventi all'inizio e ogni minuto
+  useEffect(() => {
+    updateEventStatus();
+    // const interval = setInterval(updateEventStatus, 3000);
+    // return () => clearInterval(interval);
+  }, []);
 
   // Inizio e fine della settimana corrente
   const startOfWeek = today.clone().startOf("isoWeek");
@@ -60,6 +115,8 @@ function App() {
               end={props.state.end.value}
               onConfirm={props.onConfirm}
               onClose={props.close}
+              events={events}
+              setEvents={setEvents}
             />
           )
         )}
@@ -91,19 +148,14 @@ function App() {
             const isDisabled =
               isBeforeToday || (!isCurrentWeek && !isNextWeekEnabled);
 
-            //Logica per disabilitare gli eventi
-            events.forEach((event) => {
-              event.start = moment(event.start).toDate();
-              if (startMoment.isBefore(event.start)) {
-                event.disabled = true;
-              }
-            });
-
             return (
               // console.log(start),
               <Button
                 style={{
                   height: "100%",
+                  width: "100%",
+                  padding: "0px",
+                  margin: "0px",
                   background: isDisabled ? "#eee" : "transparent",
                   cursor: isDisabled ? "not-allowed" : "pointer",
                 }}
