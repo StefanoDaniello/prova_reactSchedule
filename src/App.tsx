@@ -4,14 +4,21 @@ import { Button } from "@mui/material";
 import moment from "moment";
 
 function App() {
-  const today = moment();
+  document
+    .querySelectorAll(".css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input")
+    .forEach((input) => {
+      (input as HTMLInputElement).disabled = true;
+    });
 
+  const today = moment();
+  // console.log(today);
   const events = [
     {
       event_id: 1,
       title: "Event 1",
       editable: false,
       draggable: false,
+      //isBeforeToday mettere questa variabile a true
       // disabled: true,
       color: "#cae15a",
       textColor: "black",
@@ -117,6 +124,7 @@ function App() {
               isBeforeToday || (!isCurrentWeek && !isNextWeekEnabled);
 
             return (
+              // console.log(start),
               <Button
                 style={{
                   height: "100%",
