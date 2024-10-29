@@ -35,8 +35,8 @@ const AddEventDialog = ({
   const handleSubmit = () => {
     if (title.length < 3) {
       setError("il titolo deve essere minimo di 3 caratteri");
-    } else if (title.length > 10) {
-      setError("il titolo deve essere massimo di 10 caratteri");
+    } else if (title.length > 40) {
+      setError("il titolo deve essere massimo di 40 caratteri");
     } else if (!isNaN(Number(title))) {
       setError("Il titolo non può essere un numero");
     } else {
