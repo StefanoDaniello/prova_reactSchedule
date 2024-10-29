@@ -35,6 +35,10 @@ const AddEventDialog = ({
   const handleSubmit = () => {
     if (title.length < 3) {
       setError("il titolo deve essere minimo di 3 caratteri");
+    } else if (title.length > 10) {
+      setError("il titolo deve essere massimo di 10 caratteri");
+    } else if (!isNaN(Number(title))) {
+      setError("Il titolo non può essere un numero");
     } else {
       state.title.validity = true;
       setError("");
@@ -71,17 +75,24 @@ const AddEventDialog = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-            {error && <p className="error">{error}</p>}
+            <div
+              style={{
+                height: "25px",
+                overflow: "hidden",
+              }}
+            >
+              {error && <p className="error">{error}</p>}
+            </div>
           </div>
-          <div className="form-group">
-            <label htmlFor="event-subtitle">Subtitle</label>
-            <input
+          {/* <div className="form-group"> */}
+          {/* <label htmlFor="event-subtitle">Subtitle</label> */}
+          {/* <input
               type="text"
               id="event-subtitle"
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
-            />
-          </div>
+            /> */}
+          {/* </div> */}
           <div className="form-group date-time">
             <div>
               <label htmlFor="event-start">Start</label>
