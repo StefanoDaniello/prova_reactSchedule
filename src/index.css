@@ -62,7 +62,7 @@
 }
 
 .form-group input {
-  width: 100%;
+  width: 95%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -72,7 +72,6 @@
   display: flex;
   justify-content: space-between;
 }
-
 .date-time div {
   flex: 1;
   margin-right: 10px; /* Spazio tra i campi */

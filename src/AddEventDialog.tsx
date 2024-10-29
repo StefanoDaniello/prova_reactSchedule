@@ -86,6 +86,7 @@ const AddEventDialog = ({
             <div>
               <label htmlFor="event-start">Start</label>
               <input
+                style={{ width: "90%" }}
                 readOnly
                 value={toItDate(start)}
                 type="text"
@@ -96,6 +97,7 @@ const AddEventDialog = ({
             <div>
               <label htmlFor="event-end">End</label>
               <input
+                style={{ width: "90%" }}
                 readOnly
                 value={toItDate(end)}
                 type="text"

@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 
 function App() {
   const today = moment();
-  // today.set({ hour: 18, minute: 59, second: 59, millisecond: 59 });
+  // today.set({ hour: 20, minute: 0, second: 0, millisecond: 59 });
   const [currentHour, setCurrentHour] = useState(moment().hour());
 
   useEffect(() => {
@@ -20,7 +20,7 @@ function App() {
       // Calcola il tempo rimanente fino alla prossima ora
       const endOfHour = moment().endOf("hour");
       const timeUntilNextHour = endOfHour.diff(now);
-      console.log(now, endOfHour, timeUntilNextHour);
+      console.log(now, endOfHour, timeUntilNextHour + 1000);
 
       // Imposta il timeout per il prossimo cambio d'ora
       const timeout = setTimeout(logCurrentHour, timeUntilNextHour);
